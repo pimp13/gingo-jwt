@@ -10,11 +10,9 @@ import (
 
 func GetAllUsers(ctx *gin.Context) {
 	var users []models.User
-	/*if err := database.DB.Find(&users).Error; err != nil {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}*/
-	result := database.DB.Find(&users)
+
+	result := database.DB.Select("id", "username", "email").Find(&users)
+
 	if result.Error != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": result.Error.Error()})
 		return
@@ -44,21 +42,3 @@ func CreateUser(ctx *gin.Context) {
 
 	ctx.IndentedJSON(http.StatusCreated, gin.H{"data": user})
 }
-
-/* create user second method
-var data struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-	if err := ctx.ShouldBindJSON(&data); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	user := models.User{Username: data.Username, Email: data.Email, Password: data.Password}
-	result := database.DB.Create(&user)
-	if result.Error != nil {
-		ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": result.Error.Error()})
-		return
-	}
-*/
